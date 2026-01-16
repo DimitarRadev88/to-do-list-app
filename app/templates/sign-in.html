@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% from 'bootstrap5/form.html' import render_form %}
+<html lang="en" class="h-100" data-bs-theme="auto">
+{% include 'head.html' %}
+<body class="d-flex flex-column h-100">
+{% include 'theme-select.html' %}
+
+{% include 'header.html' %}
+<main class="form-signin w-100 m-auto">
+    <h1 class="h3 mb-3 fw-normal">Welcome back!</h1>
+    {% include 'flashed-messages.html' %}
+
+    {{ render_form(form, novalidate=True) }}
+
+</main>
+{% include 'footer.html' %}

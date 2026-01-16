@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" data-bs-theme="auto">
+{% include 'head.html' %}
+<body class="d-flex flex-column h-100">
+{% include 'theme-select.html' %}
+
+{% include 'header.html' %}
+{% include 'flashed-messages.html' %}
+
+<main class="w-100 m-auto">
+    <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+        <div class="list-group">
+            {% for task in tasks %}
+            <label class="list-group-item d-flex gap-3">
+                <input class="form-check-input flex-shrink-0" type="checkbox" value=""  style="font-size: 1.375em;">
+                <span class="pt-1 form-checked-content"> <strong>{{ task.task }}</strong></span> </label>
+            {% endfor %}
+            <a class="list-group-item d-flex gap-3 bg-body-tertiary" href="{{ url_for('get_create_task') }}">
+                <span class="pt-1 form-checked-content"> <span contenteditable="true" class="w-100">Add new task...</span> </span>
+            </a>
+        </div>
+    </div>
+</main>
+{% include 'footer.html' %}
