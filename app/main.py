@@ -1,11 +1,13 @@
-from flask import Flask, render_template, flash, redirect, url_for
+from datetime import date
+
+from flask import Flask, render_template, flash, redirect, url_for, request
 from flask_bcrypt import Bcrypt
 from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 from database import db
 from form import SignIn, SignUp, CreateTask
-from models import User, ToDoList, Task
+from model import User, ToDoList, Task
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "top secret"
@@ -21,18 +23,9 @@ login_manager.login_view = "sign-in"
 bcrypt = Bcrypt(app)
 
 with app.app_context():
+    db.drop_all()
     db.create_all()
-    # user = User(
-    #     None,
-    #     "asd@asd.asd",
-    #     "asd@asd.asd",
-    #     bcrypt.generate_password_hash("asd").decode('utf-8'),
-    # )
-    #
-    # user.to_do_list = ToDoList(user)
-    #
-    # db.session.add(user)
-    # db.session.commit()
+
 
 
 @login_manager.user_loader
@@ -57,7 +50,7 @@ def get_sign_in():
             login_user(user)
             flash("Login successful")
 
-            return redirect(url_for("get_to_do_list"))
+            return redirect(url_for("home"))
         else:
             flash("Invalid username or password")
 
@@ -92,11 +85,26 @@ def get_sign_up():
 
 
 @login_required
+@app.route("/all-tasks")
+def get_all_tasks():
+    completed = [task for task in current_user.to_do_list.tasks if task.is_completed]
+    tasks = [task for task in current_user.to_do_list.tasks if task not in completed]
+
+    return render_template("all-tasks.html", tasks=tasks, completed=completed)
+
+@login_required
 @app.route("/to-do-list")
 def get_to_do_list():
-    print(current_user.to_do_list.tasks)
+    tasks = [task for task in current_user.to_do_list.tasks if task.is_completed is False]
 
-    return render_template("to-do-list.html", tasks=list(current_user.to_do_list.tasks))
+    return render_template("to-do-list.html", tasks=tasks)
+
+@login_required
+@app.route("/completed-tasks")
+def get_completed_tasks():
+    completed = [task for task in current_user.to_do_list.tasks if task.is_completed]
+
+    return render_template("completed-tasks.html", tasks=completed)
 
 
 @login_required
@@ -105,7 +113,7 @@ def get_create_task():
     form = CreateTask()
 
     if form.validate_on_submit():
-        task = Task(form.task.data, current_user.to_do_list)
+        task = Task(form.title.data, form.task.data, current_user.to_do_list)
 
         db.session.add(task)
         db.session.commit()
@@ -115,11 +123,48 @@ def get_create_task():
     return render_template("create-task.html", form=form)
 
 
+@login_required
+@app.route("/task/<int:task_id>")
+def get_task(task_id):
+    task = db.session.execute(db.select(Task).where(Task.id == task_id)).scalar()
+
+    print(task)
+
+    return render_template("task.html", task=task)
+
 @app.route("/sign-out")
-def get_sign_out():
+def do_sign_out():
     logout_user()
 
     return redirect(url_for("get_sign_in"))
+
+
+@app.route("/mark-completed", methods=["GET", "POST"])
+def mark_completed():
+    completed_ids = [int(task_id) for task_id in request.form.values()]
+
+    db.session.execute(
+        db.update(Task)
+        .where(Task.id.in_(completed_ids))
+        .values(is_completed=True,
+                completed_on=date.today()))
+
+    db.session.commit()
+
+    return redirect(url_for("get_completed_tasks"))
+
+
+@app.route("/delete-tasks", methods=["GET", "POST"])
+def delete_tasks():
+    for_deletion_ids = [int(task_id) for task_id in request.form.values()]
+
+    db.session.execute(
+        db.delete(Task)
+        .where(Task.id.in_(for_deletion_ids)))
+
+    db.session.commit()
+
+    return redirect(url_for("get_to_do_list"))
 
 
 if __name__ == "__main__":

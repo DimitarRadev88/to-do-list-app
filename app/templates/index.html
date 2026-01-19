@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100" data-bs-theme="auto">
 {% include 'head.html' %}
-  <body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100">
 {% include 'theme-select.html' %}
 
 {% include 'header.html' %}
-    {% include 'flashed-messages.html' %}
+{% include 'flashed-messages.html' %}
+<main class="flex-shrink-0">
 
-    <main class="flex-shrink-0">
-      <div class="container">
-        <h1 class="mt-5">Sticky footer with fixed navbar</h1>
-        <p class="lead">
-          Pin a footer to the bottom of the viewport in desktop browsers with
-          this custom HTML and CSS. A fixed navbar has been added with
-          <code class="small">padding-top: 60px;</code> on the
-          <code class="small">main &gt; .container</code>.
-        </p>
-      </div>
-    </main>
+    <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold text-body-emphasis">To Do List</h1>
+        <div class="col-lg-6 mx-auto">
+            {% if not current_user.is_authenticated %}
+            <p class="lead mb-4">
+                Welcome! Sign in to view your To Do List or register to be able to create one.
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="{{ url_for('get_sign_in') }}" class="btn btn-primary btn-lg px-4 gap-3">
+                    Sign In
+                </a>
+                <a href="{{ url_for('get_sign_up') }}" class="btn btn-outline-secondary btn-lg px-4">
+                    Register
+                </a>
+            </div>
+            {% else %}
+            <p class="lead mb-4">
+                Welcome, {{ current_user.username }}!
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="{{ url_for('get_to_do_list') }}" class="btn btn-primary btn-lg px-4 gap-3">
+                    My List
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</main>
 {% include 'footer.html' %}

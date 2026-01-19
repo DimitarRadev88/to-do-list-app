@@ -1,33 +1,37 @@
 <header>
-      <!-- Fixed navbar -->
-      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
-          <a class="navbar-brand" href="{{ url_for('home') }}">To Do List</a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarCollapse"
-            aria-controls="navbarCollapse"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
-              </li>
-              {% if not current_user.is_authenticated %}
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('get_sign_in') }}">Sign in</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('get_sign_up') }}">Register</a></li>
-              {% endif %}
-              {% if current_user.is_authenticated %}
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('get_sign_out') }}">Sign out</a></li>
-              {% endif %}
-            </ul>
-          </div>
+            <a class="navbar-brand" href="{{ url_for('home') }}">To Do List</a>
+            <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarCollapse"
+                    aria-controls="navbarCollapse"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    {% if not current_user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('get_sign_in') }}">Sign in</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('get_sign_up') }}">Register</a></li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('get_to_do_list') }}">To Do</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('get_completed_tasks') }}">Completed</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('get_all_tasks') }}">All</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('do_sign_out') }}">Sign out</a></li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-      </nav>
-    </header>
+    </nav>
+</header>

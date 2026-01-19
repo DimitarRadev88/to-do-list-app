@@ -1,6 +1,7 @@
 from flask_login import UserMixin
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, String, Boolean, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import date
 
 from database import db
 
@@ -8,9 +9,9 @@ from database import db
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True)
-    email: Mapped[str] = mapped_column(unique=True, nullable=False)
-    username: Mapped[str] = mapped_column(unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(nullable=False)
+    email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String, nullable=False)
 
     to_do_list = relationship("ToDoList", back_populates="user", uselist=False)
 
@@ -37,11 +38,16 @@ class ToDoList(db.Model):
 class Task(db.Model):
     __tablename__ = "tasks"
     id: Mapped[int] = mapped_column(primary_key=True)
-    task: Mapped[str] = mapped_column(nullable=False)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    task: Mapped[str] = mapped_column(String, nullable=False)
+    is_completed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_on: Mapped[date] = mapped_column(Date, default=date.today(), nullable=False)
+    completed_on: Mapped[date] = mapped_column(Date, nullable=True)
     to_do_list_id: Mapped[int] = mapped_column(ForeignKey("to_do_lists.id"))
     to_do_list = relationship("ToDoList", back_populates="tasks", primaryjoin="ToDoList.id == Task.to_do_list_id")
 
-    def __init__(self, task, to_do_list):
+    def __init__(self, title, task, to_do_list):
         super().__init__()
+        self.title = title
         self.task = task
         self.to_do_list = to_do_list

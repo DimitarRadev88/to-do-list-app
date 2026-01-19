@@ -36,6 +36,31 @@
                    href="{{ url_for('get_create_task') }}">Add Task</a>
                 <button class="list-group-item d-flex gap-3 text-body-secondary w-50" type="submit">Mark completed
                 </button>
+
+
+            </form>
+        </div>
+        <div class="list-group">
+            <h3>Completed Tasks</h3>
+            <form method="POST" action="/delete-tasks">
+                {% for task in completed %}
+                <label class="list-group-item d-flex gap-3">
+                    <input class="form-check-input flex-shrink-0" id="completed_task_{{ task.id }}"
+                           name="completed_task_{{ task.id }}"
+                           type="checkbox" value="{{ task.id }}" style="font-size: 1.375em;">
+                    <span class="pt-1 form-checked-content"> <strong><a
+                            href="{{ url_for('get_task', task_id=task.id) }}">{{ task.title }}</a></strong>
+                        <small class="d-block text-body-secondary">
+                            <svg class="bi me-1" width="1em" height="1em" role="img" aria-label="Schedule"><use
+                                    xlink:href="#calendar-event"></use></svg>
+                        Completed on {{ task.completed_on }}
+                        </small>
+                    </span>
+                </label>
+                {% endfor %}
+                <button class="list-group-item d-flex gap-3 text-body-secondary w-50" type="submit"><span
+                        class="pt-1 form-checked-content"> <span contenteditable="true">DELETE</span> </span>
+                </button>
             </form>
         </div>
     </div>

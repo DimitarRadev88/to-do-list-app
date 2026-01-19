@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" data-bs-theme="auto">
+{% include 'head.html' %}
+<body class="d-flex flex-column h-100">
+{% include 'theme-select.html' %}
+
+{% include 'header.html' %}
+{% include 'flashed-messages.html' %}
+<main class="flex-shrink-0">
+
+    <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold text-body-emphasis">{{ task.title }}</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">
+                {{ task.task }}
+            </p>
+            {% if task.is_completed %}
+            <small class="d-block text-body-secondary">
+                <svg class="bi me-1" width="1em" height="1em" role="img" aria-label="Schedule">
+                    <use
+                            xlink:href="#calendar-event"></use>
+                </svg>
+                Completed on {{ task.completed_on }}
+            </small>
+            {% else %}
+            <small class="d-block text-body-secondary">
+                <svg class="bi me-1" width="1em" height="1em" role="img" aria-label="Schedule">
+                    <use
+                            xlink:href="#calendar-event"></use>
+                </svg>
+                Created on {{ task.created_on }}
+            </small>
+            {% endif %}
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                {% if task.is_completed %}
+                <form action="/delete-tasks" method="POST">
+                    <input class="d-none" id="d_task_{{ task.id }}" name="d_task_{{ task.id }}"
+                           value="{{ task.id }}" style="font-size: 1.375em;">
+                    <button class="btn btn-danger btn-lg px-4 gap-3">Delete</button>
+                </form>
+                {% else %}
+                <form action="/mark-completed" method="POST">
+                    <input class="d-none" id="c_task_{{ task.id }}" name="c_task_{{ task.id }}"
+                           value="{{ task.id }}" style="font-size: 1.375em;">
+                    <button class="btn btn-success btn-lg px-4 gap-3">Mark Completed</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</main>
+{% include 'footer.html' %}

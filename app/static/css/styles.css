@@ -75,3 +75,7 @@ body {
   filter: none;
   opacity: .5;
 }
+
+.links {
+  text-decoration: none;
+}
